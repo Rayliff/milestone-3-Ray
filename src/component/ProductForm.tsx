@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter, useParams } from "next/navigation";
-import { ProductFormData } from "@/types/product";
+import type { ProductFormData } from "@/types/product";
 import { createProduct, updateProduct, getProduct } from "@/lib/api";
 
-export default function ProductForm({ mode }: { mode: "create" | "edit" }) {
+export function ProductForm({ mode }: { mode: "create" | "edit" }) {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string | undefined;
@@ -27,17 +27,20 @@ export default function ProductForm({ mode }: { mode: "create" | "edit" }) {
       setLoading(true);
       getProduct(Number(id))
         .then((data) => {
-          setValue("title", data.title);
-          setValue("price", data.price);
-          setValue("description", data.description);
-          setValue("categoryId", data.category.id);
-          setValue("images", data.images ? [data.images[0]] : []);
+          if (data) {
+            setValue("title", data.title);
+            setValue("price", data.price);
+            setValue("description", data.description);
+            setValue("categoryId", data.category?.id ?? 0);
+            setValue("images", data.images?.[0] ?? "");
+          }
         })
-        .catch(() => setMessage("Gagal memuat data produk"))
+        .catch(() => setMessage("⚠️ Gagal memuat data produk"))
         .finally(() => setLoading(false));
     }
   }, [id, mode, setValue]);
 
+  // Saat submit form
   const onSubmit = async (data: ProductFormData) => {
     try {
       setLoading(true);
@@ -61,11 +64,12 @@ export default function ProductForm({ mode }: { mode: "create" | "edit" }) {
 
   return (
     <div className="max-w-md mx-auto bg-white p-6 shadow rounded-lg">
-      <h2 className="text-xl font-semibold mb-4">
+      <h2 className="text-xl font-semibold mb-4 text-center">
         {mode === "create" ? "Tambah Produk" : "Edit Produk"}
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* Nama Produk */}
         <div>
           <label className="block font-medium mb-1">Nama Produk</label>
           <input
@@ -76,6 +80,7 @@ export default function ProductForm({ mode }: { mode: "create" | "edit" }) {
           {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
         </div>
 
+        {/* Harga */}
         <div>
           <label className="block font-medium mb-1">Harga</label>
           <input
@@ -87,6 +92,7 @@ export default function ProductForm({ mode }: { mode: "create" | "edit" }) {
           {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
         </div>
 
+        {/* Deskripsi */}
         <div>
           <label className="block font-medium mb-1">Deskripsi</label>
           <textarea
@@ -94,20 +100,26 @@ export default function ProductForm({ mode }: { mode: "create" | "edit" }) {
             className="w-full border p-2 rounded"
             placeholder="Tuliskan deskripsi produk..."
           />
-          {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+          {errors.description && (
+            <p className="text-red-500 text-sm">{errors.description.message}</p>
+          )}
         </div>
 
+        {/* Kategori */}
         <div>
-          <label className="block font-medium mb-1">Kategori</label>
+          <label className="block font-medium mb-1">Kategori (ID)</label>
           <input
             type="number"
             {...register("categoryId", { required: "Kategori wajib diisi" })}
             className="w-full border p-2 rounded"
             placeholder="Masukkan ID kategori"
           />
-          {errors.categoryId && <p className="text-red-500 text-sm">{errors.categoryId.message}</p>}
+          {errors.categoryId && (
+            <p className="text-red-500 text-sm">{errors.categoryId.message}</p>
+          )}
         </div>
 
+        {/* Gambar */}
         <div>
           <label className="block font-medium mb-1">URL Gambar</label>
           <input
@@ -115,15 +127,22 @@ export default function ProductForm({ mode }: { mode: "create" | "edit" }) {
             className="w-full border p-2 rounded"
             placeholder="https://example.com/image.jpg"
           />
-          {errors.images && <p className="text-red-500 text-sm">{errors.images.message}</p>}
+          {errors.images && (
+            <p className="text-red-500 text-sm">{errors.images.message}</p>
+          )}
         </div>
 
+        {/* Tombol */}
         <button
           type="submit"
           disabled={loading}
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
-          {loading ? "Menyimpan..." : mode === "create" ? "Tambah Produk" : "Simpan Perubahan"}
+          {loading
+            ? "Menyimpan..."
+            : mode === "create"
+            ? "Tambah Produk"
+            : "Simpan Perubahan"}
         </button>
       </form>
 
