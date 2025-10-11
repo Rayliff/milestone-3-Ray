@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types/product";
 import { getProducts, searchProducts } from "@/lib/api";
 import ProductCard from "@/component/ProductCard";
 
-export default function HomePage() {
+function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -34,8 +34,17 @@ export default function HomePage() {
         <p className="text-center mt-10 text-gray-600">Produk tidak ditemukan.</p>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {!loading && products.map((product) => <ProductCard key={product.id} product={product} />)}
+        {!loading &&
+          products.map((product) => <ProductCard key={product.id} product={product} />)}
       </div>
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<p className="text-center mt-10">⏳ Memuat halaman...</p>}>
+      <ProductList />
+    </Suspense>
   );
 }
