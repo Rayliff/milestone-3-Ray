@@ -32,17 +32,22 @@ export const createProduct = async (data: ProductFormData): Promise<Product> => 
       title: data.title,
       price: Number(data.price),
       description: data.description,
-      categoryId: data.categoryId ?? 1,
-      images: data.images ? [data.images] : ["https://picsum.photos/640/480"],
+      categoryId: Number(data.categoryId) || 1,
+      images: Array.isArray(data.images)
+        ? data.images
+        : [data.images || "https://picsum.photos/640/480"],
     };
+
+    console.log("🟢 Data dikirim ke API:", productData);
 
     const res = await axios.post(API_URL, productData);
     return res.data;
-  } catch (err) {
-    console.error("❌ Gagal create product:", err);
+  } catch (err: any) {
+    console.error("❌ Gagal create product:", err.response?.data || err.message);
     throw new Error("Failed to create product");
   }
 };
+
 
 // ✅ Update produk
 export const updateProduct = async (
