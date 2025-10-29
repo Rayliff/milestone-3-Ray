@@ -38,9 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let loggedUser: User | null = null;
 
     if (username === "admin" && password === "admin123") {
-      loggedUser = { id: 1, name: "Raihan", role: "admin" };
+      loggedUser = { id: 1, name: "user", role: "admin" };
     } else if (username === "user" && password === "user123") {
-      loggedUser = { id: 2, name: "Raihan Customer", role: "customer" };
+      loggedUser = { id: 2, name: "user", role: "customer" };
     } else {
       throw new Error("Username atau password salah!");
     }
@@ -66,6 +66,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     Cookies.remove("user");
+
+    if (typeof window !== "undefined") {
+    window.location.href = "/login"; // ✅ Redirect ke login page
+  }
   };
 
   return (

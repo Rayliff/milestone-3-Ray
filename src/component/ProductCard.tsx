@@ -15,7 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageSrc =
     Array.isArray(product.images) && product.images[0]
       ? product.images[0]
-      : "https://placehold.co/300x200?text=No+Image";
+      : "https://placehold.co/300x200.png?text=No+Image";
 
   return (
     <div className="border border-yellow-400 bg-yellow-50 rounded-xl shadow-md p-4 hover:shadow-lg transition">
@@ -49,7 +49,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               image:
                 Array.isArray(product.images) && product.images[0]
                   ? product.images[0]
-                  : "https://placehold.co/300x200?text=No+Image",
+                  : "https://placehold.co/300x200.png?text=No+Image",
             })
           }
           className="bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 transition"

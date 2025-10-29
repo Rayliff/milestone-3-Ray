@@ -1,5 +1,14 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
+
+
 
 type CartItem = {
   id: number;
@@ -24,55 +33,55 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  // Simpan & ambil dari localStorage
+  // 🔹 Ambil data dari localStorage saat load pertama kali
   useEffect(() => {
-  const stored = localStorage.getItem("cart");
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      // 🔹 Pastikan setiap price dikonversi ke number
-      const normalized = parsed.map((item: any) => ({
-        ...item,
-        price: Number(item.price),
-      }));
-      setItems(normalized);
-    } catch (err) {
-      console.error("Gagal parse cart:", err);
-      setItems([]);
+    const stored = localStorage.getItem("cart");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        const normalized = parsed.map((item: any) => ({
+          ...item,
+          price: Number(item.price),
+        }));
+        setItems(normalized);
+      } catch (err) {
+        console.error("Gagal parse cart:", err);
+        setItems([]);
+      }
     }
-  }
-}, []);
+  }, []);
 
-
+  // 🔹 Simpan setiap perubahan ke localStorage
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (item: Omit<CartItem, "quantity">) => {
-  setItems((prev) => {
-    const existing = prev.find((i) => i.id === item.id);
-    if (existing) {
-      return prev.map((i) =>
-        i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-      );
-    }
-    // 🔹 pastikan price jadi number
-    return [...prev, { ...item, price: Number(item.price), quantity: 1 }];
-  });
-};
+  // === FUNGSI-FUNGSI CART DIBUNGKUS DENGAN useCallback ===
+  const addToCart = useCallback((item: Omit<CartItem, "quantity">) => {
+    setItems((prev) => {
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      }
+      return [...prev, { ...item, price: Number(item.price), quantity: 1 }];
+    });
+  }, []);
 
-
-  const removeFromCart = (id: number) =>
+  const removeFromCart = useCallback((id: number) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
+  }, []);
 
-  const increaseQty = (id: number) =>
+  const increaseQty = useCallback((id: number) => {
     setItems((prev) =>
       prev.map((i) =>
         i.id === id ? { ...i, quantity: i.quantity + 1 } : i
       )
     );
+  }, []);
 
-  const decreaseQty = (id: number) =>
+  const decreaseQty = useCallback((id: number) => {
     setItems((prev) =>
       prev
         .map((i) =>
@@ -80,27 +89,40 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         )
         .filter((i) => i.quantity > 0)
     );
+  }, []);
 
-  const clearCart = () => setItems([]);
+  const clearCart = useCallback(() => {
+    setItems([]);
+  }, []);
 
-  const totalPrice = () =>
-    items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-
-  return (
-    <CartContext.Provider
-      value={{
-        items,
-        addToCart,
-        removeFromCart,
-        increaseQty,
-        decreaseQty,
-        clearCart,
-        totalPrice,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+  const totalPrice = useCallback(
+    () => items.reduce((sum, i) => sum + i.price * i.quantity, 0),
+    [items]
   );
+
+  // === Gunakan useMemo agar context value tidak berubah setiap render ===
+  const value = useMemo(
+    () => ({
+      items,
+      addToCart,
+      removeFromCart,
+      increaseQty,
+      decreaseQty,
+      clearCart,
+      totalPrice,
+    }),
+    [
+      items,
+      addToCart,
+      removeFromCart,
+      increaseQty,
+      decreaseQty,
+      clearCart,
+      totalPrice,
+    ]
+  );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 // Hook untuk akses lebih mudah

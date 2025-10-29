@@ -156,15 +156,16 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import type { ProductFormData } from "@/types/product";
-import { createProduct, updateProduct, getProduct } from "@/lib/api";
+import { productSchema, ProductFormData } from "@/lib/validation/productSchema";
+import { createProduct, updateProduct } from "@/lib/api";
 
 interface ProductFormProps {
   mode: "create" | "edit";
-  id?: string; // untuk edit
-  initialData?: ProductFormData; // data awal saat edit
-  onSuccess?: () => void; // callback opsional
+  id?: string;
+  initialData?: ProductFormData;
+  onSuccess?: () => void;
 }
 
 export function ProductForm({ mode, id, initialData, onSuccess }: ProductFormProps) {
@@ -177,7 +178,10 @@ export function ProductForm({ mode, id, initialData, onSuccess }: ProductFormPro
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<ProductFormData>();
+  } = useForm({
+    resolver: zodResolver(productSchema),
+    defaultValues: initialData || {},
+  });
 
   // Isi form jika ada initialData (mode edit)
   useEffect(() => {
@@ -193,17 +197,15 @@ export function ProductForm({ mode, id, initialData, onSuccess }: ProductFormPro
   const onSubmit = async (data: ProductFormData) => {
     try {
       setLoading(true);
+
       if (mode === "create") {
         await createProduct(data);
         setMessage("✅ Produk berhasil dibuat!");
-        window.location.href = "/admin/products"; // 🟢 redirect setelah create
       } else if (mode === "edit" && id) {
         await updateProduct(Number(id), data);
         setMessage("✅ Produk berhasil diperbarui!");
-        window.location.href = "/admin/products"; // 🟢 redirect setelah edit
       }
 
-      // callback atau redirect
       setTimeout(() => {
         onSuccess?.();
         router.push("/admin/products");
@@ -227,7 +229,7 @@ export function ProductForm({ mode, id, initialData, onSuccess }: ProductFormPro
         <div>
           <label className="block font-medium mb-1 text-black">Nama Produk</label>
           <input
-            {...register("title", { required: "Nama produk wajib diisi" })}
+            {...register("title")}
             className="w-full border p-2 rounded text-black placeholder-gray"
             placeholder="Contoh: Meja Kayu"
           />
@@ -239,7 +241,7 @@ export function ProductForm({ mode, id, initialData, onSuccess }: ProductFormPro
           <label className="block font-medium mb-1 text-black">Harga</label>
           <input
             type="number"
-            {...register("price", { required: "Harga wajib diisi" })}
+            {...register("price")}
             className="w-full border p-2 rounded text-black placeholder-gray"
             placeholder="Contoh: 50000"
           />
@@ -250,7 +252,7 @@ export function ProductForm({ mode, id, initialData, onSuccess }: ProductFormPro
         <div>
           <label className="block font-medium mb-1 text-black">Deskripsi</label>
           <textarea
-            {...register("description", { required: "Deskripsi wajib diisi" })}
+            {...register("description")}
             className="w-full border p-2 rounded text-black placeholder-gray"
             placeholder="Tuliskan deskripsi produk..."
           />
@@ -262,7 +264,7 @@ export function ProductForm({ mode, id, initialData, onSuccess }: ProductFormPro
           <label className="block font-medium mb-1 text-black">Kategori (ID)</label>
           <input
             type="number"
-            {...register("categoryId", { required: "Kategori wajib diisi" })}
+            {...register("categoryId")}
             className="w-full border p-2 rounded text-black placeholder-gray"
             placeholder="Masukkan ID kategori"
           />
@@ -273,7 +275,7 @@ export function ProductForm({ mode, id, initialData, onSuccess }: ProductFormPro
         <div>
           <label className="block font-medium mb-1 text-black">URL Gambar</label>
           <input
-            {...register("images", { required: "Gambar wajib diisi" })}
+            {...register("images")}
             className="w-full border p-2 rounded text-black placeholder-gray"
             placeholder="https://example.com/image.jpg"
           />
