@@ -20,9 +20,16 @@ export default function CartPage() {
           <div className="flex justify-between items-center mt-6 border-t pt-4">
             <h2 className="text-xl text-black font-semibold">Total:</h2>
             <p className="text-xl font-bold text-yellow-700">
-              Rp {totalPrice().toLocaleString()}
+              $ {totalPrice().toLocaleString()}
             </p>
           </div>
+
+          <a
+            href="/checkout"
+            className="w-full block text-center mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg"
+          >
+            Checkout
+          </a>
 
           <button
             onClick={clearCart}

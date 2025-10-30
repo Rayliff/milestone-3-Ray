@@ -27,7 +27,7 @@ export default function CartItem({ id, title, price, image, quantity }: Props) {
         <div>
           <h3 className="font-semibold text-gray-800">{title}</h3>
           <p className="text-yellow-600 font-medium">
-            Rp {price.toLocaleString()}
+            $ {price.toLocaleString()}
           </p>
           <div className="flex items-center gap-2 mt-2">
             <button
@@ -49,8 +49,9 @@ export default function CartItem({ id, title, price, image, quantity }: Props) {
 
       <div className="flex items-center gap-3">
         <p className="text-gray-700 font-semibold">
-          Rp {(price * quantity).toLocaleString()}
+          $ {(price * quantity).toLocaleString()}
         </p>
+
         <button
           onClick={() => removeFromCart(id)}
           className="text-red-500 hover:text-red-600"
