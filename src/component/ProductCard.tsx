@@ -2,6 +2,7 @@
 
 import { Product } from "@/types/product";
 import Image from "next/image";
+import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 
@@ -10,21 +11,22 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { addToCart } = useCart(); // ✅ ambil fungsi addToCart dari context
+  const { addToCart } = useCart();
+  const fallback = "https://placehold.co/300x200?text=No+Image";
 
-  const imageSrc =
-    Array.isArray(product.images) && product.images[0]
-      ? product.images[0]
-      : "https://placehold.co/300x200.png?text=No+Image";
+  const [imgSrc, setImgSrc] = useState(
+    Array.isArray(product.images) && product.images[0] ? product.images[0] : fallback
+  );
 
   return (
     <div className="border border-yellow-400 bg-yellow-50 rounded-xl shadow-md p-4 hover:shadow-lg transition">
       <div className="relative w-full h-48 mb-2">
         <Image
-          src={imageSrc}
+          src={imgSrc}
           alt={product.title ?? "Produk"}
           fill
           className="object-cover rounded-md"
+          onError={() => setImgSrc(fallback)} // ✅ anti error
         />
       </div>
 
@@ -39,17 +41,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           Lihat Detail
         </Link>
 
-        {/* Tombol checkout */}
         <button
           onClick={() =>
             addToCart({
-              id: Number(product.id), // ✅ pastikan ID jadi number
+              id: Number(product.id),
               title: product.title,
               price: product.price,
-              image:
-                Array.isArray(product.images) && product.images[0]
-                  ? product.images[0]
-                  : "https://placehold.co/300x200.png?text=No+Image",
+              image: imgSrc,
             })
           }
           className="bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 transition"

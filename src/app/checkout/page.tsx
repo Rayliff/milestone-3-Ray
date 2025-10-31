@@ -12,7 +12,7 @@ export default function CheckoutPage() {
   const handlePayment = () => {
     alert("✅ Pembayaran berhasil!");
     clearCart();
-    router.push("/success"); // bisa ganti ke home jika mau
+    router.push("/"); // bisa ganti ke home jika mau
   };
 
   if (!items.length) {

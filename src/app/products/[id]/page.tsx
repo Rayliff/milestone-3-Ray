@@ -1,29 +1,20 @@
-import ProductDetail from "@/component/ProductDetail";
-import { getProduct } from "@/lib/api";
-import Image from "next/image";
+"use client";
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+import { use } from "react";
+import { useProduct } from "@/hooks/useProduct";
+import dynamic from "next/dynamic";
 
-export default async function ProductDetailPage({ params }: Props) {
-  const { id } = await params; // ✅ Wajib di-await di Next 15+
+const ProductDetail = dynamic(() => import("@/component/ProductDetail"), {
+  loading: () => <p className="text-center mt-10">Memuat detail...</p>
+});
 
-  let product;
-  try {
-    product = await getProduct(Number(id));
-  } catch (err) {
-    console.error("Gagal fetch product:", err);
-    product = null;
-  }
+export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params); // ✅ Fix Next.js new params behavior
 
-  if (!product) {
-    return (
-      <p className="text-center mt-8 text-red-500">
-        Produk tidak ditemukan.
-      </p>
-    );
-  }
+  const { product, loading, error } = useProduct(id);
+
+  if (loading) return <p className="text-center mt-10">Loading produk...</p>;
+  if (error || !product) return <p className="text-center text-red-500">Produk tidak ditemukan.</p>;
 
   return (
     <main className="p-6">

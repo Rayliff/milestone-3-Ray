@@ -55,15 +55,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    
     remotePatterns: [
-      { protocol: "https", hostname: "api.escuelajs.co", pathname: "/**" },
-      // { protocol: "https", hostname: "picsum.photos", pathname: "/**" },
-      { protocol: "https", hostname: "placehold.co", pathname: "/**" },
-      // { protocol: "https", hostname: "loremflickr.com", pathname: "/**" },
-      { protocol: "https", hostname: "i.imgur.com", pathname: "/**" },
-      // { protocol: "https", hostname: "placeimg.com", pathname: "/**" },
-      // { protocol: "https", hostname: "images.samsung.com", pathname: "/**" },
+      { protocol: "https", hostname: "api.escuelajs.co" },
+      { protocol: "https", hostname: "placehold.co" },
+      { protocol: "https", hostname: "via.placeholder.com" },
+      { protocol: "https", hostname: "i.imgur.com" },
+      { protocol: "https", hostname: "cdn.discordapp.com" },
+      // OPTIONAL (kompat untuk data lama)
+      { protocol: "https", hostname: "placeimg.com" },
     ],
   },
 };

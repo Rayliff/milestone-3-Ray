@@ -97,12 +97,18 @@
 
 import { Product } from "@/types/product";
 import Image from "next/image";
+import { useState } from "react";
 
 interface ProductDetailProps {
   product: Product;
 }
 
 export default function ProductDetail({ product }: ProductDetailProps) {
+  const fallback = "https://placehold.co/500x400?text=No+Image";
+  const [imgSrc, setImgSrc] = useState(
+    Array.isArray(product.images) && product.images[0] ? product.images[0] : fallback
+  );
+
   if (!product) {
     return (
       <div className="text-center py-10">
@@ -116,14 +122,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       <div className="grid md:grid-cols-2 gap-8">
         <div className="relative w-full h-80 bg-gray-100 rounded-lg overflow-hidden">
           <Image
-            src={
-              Array.isArray(product.images) && product.images[0]
-                ? product.images[0]
-                : "https://placehold.co/500x400?text=No+Image"
-            }
+            src={imgSrc}
             alt={product.title}
             fill
             className="object-cover"
+            onError={() => setImgSrc(fallback)} // ✅ kalau gambar error, pasang fallback
           />
         </div>
 
@@ -151,4 +154,3 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     </div>
   );
 }
-
