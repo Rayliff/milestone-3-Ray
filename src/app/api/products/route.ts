@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 
-
-
 // API URL external (Fake Store API atau Escuelajs)
 const API_URL = "https://api.escuelajs.co/api/v1/products";
 
