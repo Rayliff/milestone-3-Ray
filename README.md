@@ -3,6 +3,90 @@
 You can view the project deployment and status on Vercel here:  
 🔗 [RevoShop on Vercel](https://milestone-3-ray-lkh5.vercel.app/)
 
+Overview
+
+Project ini adalah aplikasi e-commerce sederhana yang dibangun menggunakan Next.js 14 App Router.
+Aplikasi ini memungkinkan pengguna untuk:
+
+Melihat daftar produk
+
+Melihat detail produk
+
+Melakukan pencarian produk
+
+Menambahkan produk ke cart (dummy)
+
+Melakukan checkout (dummy)
+
+Login untuk akses halaman admin
+
+CRUD produk dari panel admin
+
+Server-side rendering (SSR) + ISR untuk optimasi
+
+Proyek ini dibuat untuk latihan web development modern dengan Next.js dan API eksternal.
+
+✨ Features Implemented
+👤 User Features
+
+✅ Browse Product List
+✅ Search product by keyword
+✅ View product detail
+✅ Add to cart (dummy)
+✅ Checkout simulation (with success alert)
+
+🔐 Authentication
+
+✅ Login page (mock login)
+✅ Protected admin routes
+
+🛠️ Admin Panel
+
+✅ Dashboard admin
+✅ Create new product
+✅ Edit product
+✅ Delete product
+✅ List products in admin
+✅ Data fetching hooks (useProducts & useProduct)
+
+⚙️ System Features
+
+✅ CSR, SSR, ISR mix usage
+✅ Loading & error state
+✅ Responsive UI
+
+🧰 Technologies Used
+Category	Tech
+Framework	Next.js 14 (App Router)
+Styling	Tailwind CSS
+API	Platzi Fake Store API
+Auth	Client-side mock auth (useLocalStorage)
+State Mgmt	React Hooks
+Data Fetch	fetch(), dynamic & static rendering
+Icons	Lucide-React
+UI Components	Custom components
+📂 Project Structure (simplified)
+src/
+ ┣ app/
+ ┃ ┣ products/
+ ┃ ┃ ┣ [id]/page.tsx
+ ┃ ┃ ┗ page.tsx
+ ┃ ┣ admin/
+ ┃ ┃ ┣ products/
+ ┃ ┃ ┃ ┣ new/page.tsx
+ ┃ ┃ ┃ ┗ [id]/edit/page.tsx
+ ┃ ┃ ┗ page.tsx
+ ┃ ┗ login/page.tsx
+ ┣ components/
+ ┃ ┣ ProductCard.tsx
+ ┃ ┣ ProductListClient.tsx
+ ┃ ┗ ProductDetail.tsx
+ ┣ hooks/
+ ┃ ┣ useProduct.ts
+ ┃ ┗ useProducts.ts
+ ┗ lib/
+   ┗ api.ts
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
